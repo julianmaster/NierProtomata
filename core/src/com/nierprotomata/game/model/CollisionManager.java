@@ -1,24 +1,14 @@
 package com.nierprotomata.game.model;
 
 import com.badlogic.gdx.math.Intersector;
+import com.nierprotomata.game.model.entities.Entity;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CollisionManager {
 
-	private static List<Entity> entities = new ArrayList<>();
-	private static List<Entity> entitiesToRemove = new ArrayList<>();
-
-	public static boolean add(Entity entity) {
-		return entities.add(entity);
-	}
-
-	public static boolean remove(Entity entity) {
-		return entitiesToRemove.add(entity);
-	}
-
-	public static void update() {
+	public static void update(List<Entity> entities) {
 		for(Entity entity1 : entities) {
 			for(Entity entity2 : entities) {
 				if(entity1 != entity2) {
@@ -28,10 +18,5 @@ public class CollisionManager {
 				}
 			}
 		}
-
-		for(Entity entity : entitiesToRemove) {
-			entities.remove(entity);
-		}
-		entitiesToRemove.clear();
 	}
 }

@@ -1,31 +1,27 @@
-package com.nierprotomata.game.model;
+package com.nierprotomata.game.model.entities;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Polygon;
-import com.badlogic.gdx.math.Rectangle;
 import com.nierprotomata.game.utils.TextureManager;
 import com.nierprotomata.game.view.Assets;
 import com.nierprotomata.game.view.GameScreen;
 
 public class Bullet extends Entity {
 
-	public float speed = 200f;
-
+	private float speed = 200f;
 	private float angleOffset = 90f;
 
-	public Bullet(GameScreen screen, Rectangle rect, float degrees) {
-		super(screen, rect);
+	public Bullet(GameScreen screen, Polygon shape, float degrees) {
+		super(screen, shape);
 
 		getShape().setRotation(degrees);
 
-		final float cos1 = MathUtils.cosDeg(getShape().getRotation() + angleOffset);
-		final float sin1 = MathUtils.sinDeg(getShape().getRotation() + angleOffset);
-		final float cos2 = MathUtils.cosDeg(getShape().getRotation());
-		final float sin2 = MathUtils.sinDeg(getShape().getRotation());
-		getShape().translate(cos1 * 3 - cos2 * getShape().getBoundingRectangle().width / 2f, sin1 * 3 - sin2 * getShape().getBoundingRectangle().width / 2f);
+		final float cos1 = MathUtils.cosDeg(getShape().getRotation() + angleOffset + 50f);
+		final float sin1 = MathUtils.sinDeg(getShape().getRotation() + angleOffset + 50f);
+		getShape().translate(cos1 * 4, sin1 * 4);
 	}
 
 	@Override
@@ -50,8 +46,10 @@ public class Bullet extends Entity {
 	@Override
 	public void triggerCollision(Entity otherCollider) {
 		if(otherCollider instanceof Wall) {
-			getScreen().getEntities().remove(this);
-			CollisionManager.remove(this);
+			getScreen().getEntitiesToRemove().add(this);
+		}
+		else if(otherCollider instanceof Enemy) {
+			getScreen().getEntitiesToRemove().add(this);
 		}
 	}
 }

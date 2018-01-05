@@ -1,34 +1,33 @@
-package com.nierprotomata.game.model;
+package com.nierprotomata.game.model.entities;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.*;
+import com.nierprotomata.game.model.CollisionManager;
+import com.nierprotomata.game.model.Constants;
+import com.nierprotomata.game.utils.ShapeConverter;
 import com.nierprotomata.game.utils.TextureManager;
 import com.nierprotomata.game.view.Assets;
 import com.nierprotomata.game.view.GameScreen;
 
 public class Player extends Entity {
 
-	private final OrthographicCamera cam;
+	private final Camera cam;
 
-	private Vector2 previousPosition;
 	private int life = 3;
 	private float speed = 120f;
 
 	private float angleOffset = -90f;
 
-	public Player(GameScreen screen, Rectangle rect, OrthographicCamera cam) {
-		super(screen, rect);
-		this.cam = cam;
+	private float fireTimer = 0f;
 
-		getShape().setVertices(new float[]{0,0,rect.width,0,rect.width/2f,rect.height});
-		getShape().setPosition(rect.x - rect.width / 2f, rect.y - rect.height / 2f);
-		previousPosition = new Vector2(getShape().getX(), getShape().getY());
-		getShape().setOrigin(rect.width/2, rect.height/2);
+	public Player(GameScreen screen, Polygon polygon, Camera cam) {
+		super(screen, polygon);
+		this.cam = cam;
 	}
 
 	@Override
@@ -46,7 +45,6 @@ public class Player extends Entity {
 
 		float x = shape.getX();
 		float y = shape.getY();
-		previousPosition.set(x, y);
 		if(Gdx.input.isKeyPressed(Input.Keys.Z)) {
 			y += speed * delta;
 		}
@@ -62,11 +60,16 @@ public class Player extends Entity {
 		shape.setPosition(x, y);
 
 
-		if(Gdx.input.isTouched()) {
-			Texture bulletTex = TextureManager.get(Assets.BULLET.ordinal());
-			Bullet bullet = new Bullet(getScreen(), new Rectangle(shape.getTransformedVertices()[4], shape.getTransformedVertices()[5], bulletTex.getWidth(), bulletTex.getHeight()), shape.getRotation());
-			getScreen().getEntitiesToAdd().add(bullet);
-			CollisionManager.add(bullet);
+		fireTimer -= delta;
+		if(fireTimer <= 0f) {
+			fireTimer = 0f;
+			if(Gdx.input.isTouched()) {
+				fireTimer = Constants.FIRE_WAIT;
+				Texture bulletTex = TextureManager.get(Assets.BULLET.ordinal());
+				Rectangle bulletRect = new Rectangle(getShape().getTransformedVertices()[4], getShape().getTransformedVertices()[5], bulletTex.getWidth(), bulletTex.getHeight());
+				Bullet bullet = new Bullet(getScreen(), ShapeConverter.rectToPolygon(bulletRect), getShape().getRotation());
+				getScreen().getEntitiesToAdd().add(bullet);
+			}
 		}
 	}
 

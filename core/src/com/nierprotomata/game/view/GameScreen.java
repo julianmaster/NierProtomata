@@ -3,12 +3,15 @@ package com.nierprotomata.game.view;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.nierprotomata.game.NierProtomata;
 import com.nierprotomata.game.model.*;
+import com.nierprotomata.game.model.entities.Entity;
+import com.nierprotomata.game.model.entities.Player;
+import com.nierprotomata.game.model.entities.Wall;
+import com.nierprotomata.game.utils.ShapeConverter;
 import com.nierprotomata.game.utils.TextureManager;
 
 import java.util.ArrayList;
@@ -19,8 +22,10 @@ public class GameScreen extends ScreenAdapter {
     private final NierProtomata game;
 
     private Player player;
+
     private List<Entity> entities = new ArrayList<>();
     private List<Entity> entitiesToAdd = new ArrayList<>();
+    private List<Entity> entitiesToRemove = new ArrayList<>();
 
     private boolean debug = true;
 
@@ -30,18 +35,14 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void show() {
-        entities.add(new Wall(this, new Rectangle(28, 25, 11, 188)));
-        entities.add(new Wall(this, new Rectangle(39, 14, 244, 11)));
-        entities.add(new Wall(this, new Rectangle(283, 25, 11, 188)));
-        entities.add(new Wall(this, new Rectangle(39, 213, 244, 11)));
+        entities.add(new Wall(this, ShapeConverter.rectToPolygon(new Rectangle(28, 25, 11, 188))));
+        entities.add(new Wall(this, ShapeConverter.rectToPolygon(new Rectangle(39, 14, 244, 11))));
+        entities.add(new Wall(this, ShapeConverter.rectToPolygon(new Rectangle(283, 25, 11, 188))));
+        entities.add(new Wall(this, ShapeConverter.rectToPolygon(new Rectangle(39, 213, 244, 11))));
 
-        Texture playerTex = TextureManager.get(Assets.PLAYER.ordinal());
-        player = new Player(this, new Rectangle(Constants.CAMERA_WIDTH / 2f - playerTex.getWidth() / 2f, Constants.CAMERA_HEIGHT / 4f - playerTex.getHeight() / 2f, TextureManager.get(Assets.PLAYER.ordinal()).getWidth(), TextureManager.get(Assets.PLAYER.ordinal()).getHeight()), game.getCam());
-        entities.add(player);
+        entities.add(LevelGenerator.generatePlayer(this, game.getCam()));
 
-        for(Entity entity : entities) {
-            CollisionManager.add(entity);
-        }
+        entities.addAll(LevelGenerator.generateLevel(this, 1));
     }
 
     @Override
@@ -53,11 +54,16 @@ public class GameScreen extends ScreenAdapter {
             entity.update(delta);
         }
 
+        // Collision
+        CollisionManager.update(entities);
+
+        // Add new entities
         entities.addAll(entitiesToAdd);
         entitiesToAdd.clear();
 
-        CollisionManager.update();
-
+        // Remove old entities
+        entities.removeAll(entitiesToRemove);
+        entitiesToRemove.clear();
 
         // Render
         batch.begin();
@@ -88,6 +94,10 @@ public class GameScreen extends ScreenAdapter {
 
     public List<Entity> getEntitiesToAdd() {
         return entitiesToAdd;
+    }
+
+    public List<Entity> getEntitiesToRemove() {
+        return entitiesToRemove;
     }
 
     @Override
