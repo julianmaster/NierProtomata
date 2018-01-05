@@ -31,7 +31,17 @@ public class Player extends Entity {
 	@Override
 	public void update(float delta) {
 		Polygon shape = getShape();
-		Texture player = TextureManager.get(Assets.PLAYER.ordinal());
+
+		Texture player;
+		if(life == 3) {
+			player = TextureManager.get(Assets.PLAYER_FULL_LIFE.ordinal());
+		}
+		else if(life == 2) {
+			player = TextureManager.get(Assets.PLAYER_MID_LIFE.ordinal());
+		}
+		else {
+			player = TextureManager.get(Assets.PLAYER_LOW_LIFE.ordinal());
+		}
 
 		Vector3 mouseInWorld3D = new Vector3();
 		mouseInWorld3D.x = Gdx.input.getX();
@@ -73,13 +83,27 @@ public class Player extends Entity {
 
 	@Override
 	public void render(SpriteBatch batch) {
+
+		Texture player;
+		Texture playerShadow;
+		if(life == 3) {
+			player = TextureManager.get(Assets.PLAYER_FULL_LIFE.ordinal());
+			playerShadow = TextureManager.get(Assets.PLAYER_FULL_LIFE_SHADOW.ordinal());
+		}
+		else if(life == 2) {
+			player = TextureManager.get(Assets.PLAYER_MID_LIFE.ordinal());
+			playerShadow = TextureManager.get(Assets.PLAYER_MID_LIFE_SHADOW.ordinal());
+		}
+		else {
+			player = TextureManager.get(Assets.PLAYER_LOW_LIFE.ordinal());
+			playerShadow = TextureManager.get(Assets.PLAYER_LOW_LIFE_SHADOW.ordinal());
+		}
+
 		Polygon shape = getShape();
-		Texture player = TextureManager.get(Assets.PLAYER.ordinal());
-		Texture playerShadow = TextureManager.get(Assets.PLAYER_SHADOW.ordinal());
 		TextureRegion texPlayer = new TextureRegion(player);
 		TextureRegion texPlayerShadow = new TextureRegion(playerShadow);
 
-		batch.draw(texPlayerShadow, shape.getX()-1, shape.getY()-1, shape.getOriginX(), shape.getOriginY(), player.getWidth(), player.getHeight(), 1, 1,  shape.getRotation());
+		batch.draw(texPlayerShadow, shape.getX()-1, shape.getY()-1, shape.getOriginX(), shape.getOriginY(), playerShadow.getWidth(), playerShadow.getHeight(), 1, 1,  shape.getRotation());
 		batch.draw(texPlayer, shape.getX(), shape.getY(), shape.getOriginX(), shape.getOriginY(), player.getWidth(), player.getHeight(), 1, 1,  shape.getRotation());
 	}
 
@@ -111,6 +135,20 @@ public class Player extends Entity {
 				}
 				i++;
 			}while (collided);
+		}
+
+		if(otherCollider instanceof RedEnemyBullet || otherCollider instanceof PurpleEnemyBullet) {
+			life--;
+			if(life == 2) {
+				Texture playerTex = TextureManager.get(Assets.PLAYER_MID_LIFE.ordinal());
+				getShape().setVertices(new float[]{playerTex.getWidth()/2f, 0, playerTex.getWidth(), 0, playerTex.getWidth()/2f, playerTex.getHeight(), 0, playerTex.getHeight()/2f});
+				getShape().setOrigin(playerTex.getWidth()/2f, playerTex.getHeight()/2f);
+			}
+			else {
+				Texture playerTex = TextureManager.get(Assets.PLAYER_LOW_LIFE.ordinal());
+				getShape().setVertices(new float[]{0, 0, playerTex.getWidth(), 0, playerTex.getWidth()/2f, playerTex.getHeight()});
+				getShape().setOrigin(playerTex.getWidth()/2f, playerTex.getHeight()/2f);
+			}
 		}
 	}
 }

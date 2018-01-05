@@ -33,8 +33,12 @@ public class NierProtomata extends Game {
 	public void load() {
 		TextureManager.load(Gdx.files.internal("wall.png"));
 		TextureManager.load(Gdx.files.internal("ground.png"));
-		TextureManager.load(Gdx.files.internal("player.png"));
-		TextureManager.load(Gdx.files.internal("player_shadow.png"));
+		TextureManager.load(Gdx.files.internal("player_full_life.png"));
+		TextureManager.load(Gdx.files.internal("player_full_life_shadow.png"));
+		TextureManager.load(Gdx.files.internal("player_mid_life.png"));
+		TextureManager.load(Gdx.files.internal("player_mid_life_shadow.png"));
+		TextureManager.load(Gdx.files.internal("player_low_life.png"));
+		TextureManager.load(Gdx.files.internal("player_low_life_shadow.png"));
 		TextureManager.load(Gdx.files.internal("bullet.png"));
 		TextureManager.load(Gdx.files.internal("bullet_shadow.png"));
 		TextureManager.load(Gdx.files.internal("enemy1.png"));

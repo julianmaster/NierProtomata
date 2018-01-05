@@ -20,7 +20,7 @@ import java.util.List;
 public class LevelGenerator {
 
 	public static Entity generatePlayer(GameScreen screen, Camera camera) {
-		Texture playerTex = TextureManager.get(Assets.PLAYER.ordinal());
+		Texture playerTex = TextureManager.get(Assets.PLAYER_FULL_LIFE.ordinal());
 
 		Polygon polygon = new Polygon(new float[]{0, 0, playerTex.getWidth(), 0, playerTex.getWidth()/2f, playerTex.getHeight()});
 		polygon.setPosition(Constants.CAMERA_WIDTH / 2f - playerTex.getWidth() / 2f, Constants.CAMERA_HEIGHT / 4f - playerTex.getHeight() / 2f);
@@ -44,8 +44,8 @@ public class LevelGenerator {
 		Texture enemy1Tex = TextureManager.get(Assets.ENEMY1.ordinal());
 		Rectangle enemy1Rect = new Rectangle(Constants.CAMERA_WIDTH / 2f - enemy1Tex.getWidth() / 2f, Constants.CAMERA_HEIGHT * 7f/10f - enemy1Tex.getHeight() / 2f, enemy1Tex.getWidth(), enemy1Tex.getHeight());
 		List<Vector2> path = new LinkedList<>();
-		path.add(new Vector2(Constants.CAMERA_WIDTH * 8f/10f, Constants.CAMERA_HEIGHT * 7f/10f - enemy1Tex.getHeight()/2f));
-		path.add(new Vector2(Constants.CAMERA_WIDTH * 1f/10f, Constants.CAMERA_HEIGHT * 7f/10f - enemy1Tex.getHeight()/2f));
+		path.add(new Vector2(Constants.CAMERA_WIDTH - 50 - enemy1Tex.getWidth(), Constants.CAMERA_HEIGHT * 7f/10f - enemy1Tex.getHeight()/2f));
+		path.add(new Vector2(50, Constants.CAMERA_HEIGHT * 7f/10f - enemy1Tex.getHeight()/2f));
 		Enemy1 enemy1 = new Enemy1(screen, ShapeConverter.rectToPolygon(enemy1Rect), path);
 		entities.add(enemy1);
 

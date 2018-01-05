@@ -36,7 +36,7 @@ public class PurpleEnemyBullet extends Entity {
 
     @Override
     public void triggerCollision(Entity otherCollider) {
-        if(otherCollider instanceof Wall) {
+        if(otherCollider instanceof Wall || otherCollider instanceof Player) {
             getScreen().getEntitiesToRemove().add(this);
         }
     }
