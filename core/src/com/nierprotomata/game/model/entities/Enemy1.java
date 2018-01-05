@@ -3,8 +3,12 @@ package com.nierprotomata.game.model.entities;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Polygon;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.nierprotomata.game.model.Constants;
+import com.nierprotomata.game.utils.ShapeConverter;
 import com.nierprotomata.game.utils.TextureManager;
 import com.nierprotomata.game.view.Assets;
 import com.nierprotomata.game.view.GameScreen;
@@ -17,28 +21,46 @@ public class Enemy1 extends Enemy {
 	private int life = 5;
 	private int position = 0;
 
-	private float speed = 80f;
+	private float fireTimer = 0f;
+	private boolean redBullet = false;
 
 	public Enemy1(GameScreen screen, Polygon shape, List<Vector2> path) {
 		super(screen, shape);
 		this.path = path;
+		this.setSpeed(Constants.ENEMY1_SPEED);
 	}
 
 	@Override
 	public void update(float delta) {
-		float deltaX = Math.min(path.get(position).x * speed * delta, path.get(position).x - getShape().getX());
-		float deltaY = Math.min(path.get(position).y * speed * delta, path.get(position).y - getShape().getY());
+		float degree = MathUtils.atan2(path.get(position).y - getShape().getY(), path.get(position).x - getShape().getX());
+		getDirection().set(MathUtils.cos(degree), MathUtils.sin(degree));
+		updatePhysic();
 
-		getShape().translate(deltaX, deltaY);
-//
-//		if(Math.abs(getShape().getX() - path.get(position).x) < deltaX && Math.abs(getShape().getY() - path.get(position).y) < deltaY) {
-//			getShape().translate(path.get(position).x, path.get(position).y);
-//			position++;
-//			position %= path.size();
-//		}
-//		else {
-//			getShape().translate(deltaX, deltaY);
-//		}
+		if(Math.abs(path.get(position).y - getShape().getY()) < 1f && Math.abs(path.get(position).x - getShape().getX()) < 1f) {
+			position++;
+			position %= path.size();
+		}
+
+		fireTimer -= delta;
+		if(fireTimer <= 0f) {
+			fireTimer = Constants.ENEMY1_FIRE_RATE;
+			float fireDegree = MathUtils.atan2(getScreen().getPlayer().getShape().getY() -getShape().getY(), getScreen().getPlayer().getShape().getX() - getShape().getX());
+
+			if(redBullet) {
+				Texture redBulletTex = TextureManager.get(Assets.RED_BULLET.ordinal());
+				Rectangle redBulletRect = new Rectangle(getShape().getX(), getShape().getY(), redBulletTex.getWidth(), redBulletTex.getHeight());
+				RedEnemyBullet redBullet = new RedEnemyBullet(getScreen(), ShapeConverter.rectToPolygon(redBulletRect), fireDegree);
+				getScreen().getEntitiesToAdd().add(redBullet);
+			}
+			else {
+				Texture purpleBulletTex = TextureManager.get(Assets.PURPLE_BULLET.ordinal());
+				Rectangle purpleBulletRect = new Rectangle(getShape().getX(), getShape().getY(), purpleBulletTex.getWidth(), purpleBulletTex.getHeight());
+				PurpleEnemyBullet purpleBullet = new PurpleEnemyBullet(getScreen(), ShapeConverter.rectToPolygon(purpleBulletRect), fireDegree);
+				getScreen().getEntitiesToAdd().add(purpleBullet);
+			}
+
+			redBullet = !redBullet;
+		}
 	}
 
 	@Override

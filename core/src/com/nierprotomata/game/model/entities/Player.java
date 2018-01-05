@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.*;
-import com.nierprotomata.game.model.CollisionManager;
 import com.nierprotomata.game.model.Constants;
 import com.nierprotomata.game.utils.ShapeConverter;
 import com.nierprotomata.game.utils.TextureManager;
@@ -19,15 +18,14 @@ public class Player extends Entity {
 	private final Camera cam;
 
 	private int life = 3;
-	private float speed = 120f;
 
 	private float angleOffset = -90f;
-
 	private float fireTimer = 0f;
 
 	public Player(GameScreen screen, Polygon polygon, Camera cam) {
 		super(screen, polygon);
 		this.cam = cam;
+		this.setSpeed(Constants.PLAYER_SPEED);
 	}
 
 	@Override
@@ -40,31 +38,31 @@ public class Player extends Entity {
 		mouseInWorld3D.y = Gdx.input.getY();
 		cam.unproject(mouseInWorld3D);
 
-		float angle = (float)Math.atan2(mouseInWorld3D.y - shape.getBoundingRectangle().y - player.getHeight() / 2f, mouseInWorld3D.x - shape.getBoundingRectangle().x - player.getWidth()/ 2f) * 180f / (float)Math.PI + angleOffset;
+		float angle = MathUtils.atan2(mouseInWorld3D.y - shape.getBoundingRectangle().y - player.getHeight() / 2f, mouseInWorld3D.x - shape.getBoundingRectangle().x - player.getWidth()/ 2f) * 180f / (float)Math.PI + angleOffset;
 		getShape().setRotation(angle);
 
-		float x = shape.getX();
-		float y = shape.getY();
+		int x = 0, y = 0;
 		if(Gdx.input.isKeyPressed(Input.Keys.Z)) {
-			y += speed * delta;
+			y++;
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.Q)) {
-			x -= speed * delta;
+			x--;
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.S)) {
-			y -= speed * delta;
+			y--;
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.D)) {
-			x += speed * delta;
+			x++;
 		}
-		shape.setPosition(x, y);
 
+		getDirection().set(x, y);
+		updatePhysic();
 
 		fireTimer -= delta;
 		if(fireTimer <= 0f) {
 			fireTimer = 0f;
 			if(Gdx.input.isTouched()) {
-				fireTimer = Constants.FIRE_WAIT;
+				fireTimer = Constants.PLAYER_FIRE_RATE;
 				Texture bulletTex = TextureManager.get(Assets.BULLET.ordinal());
 				Rectangle bulletRect = new Rectangle(getShape().getTransformedVertices()[4], getShape().getTransformedVertices()[5], bulletTex.getWidth(), bulletTex.getHeight());
 				Bullet bullet = new Bullet(getScreen(), ShapeConverter.rectToPolygon(bulletRect), getShape().getRotation());

@@ -21,13 +21,13 @@ public class GameScreen extends ScreenAdapter {
 
     private final NierProtomata game;
 
-    private Player player;
+    private Entity player;
 
     private List<Entity> entities = new ArrayList<>();
     private List<Entity> entitiesToAdd = new ArrayList<>();
     private List<Entity> entitiesToRemove = new ArrayList<>();
 
-    private boolean debug = true;
+    private boolean debug = false;
 
     public GameScreen(NierProtomata game) {
         this.game = game;
@@ -40,7 +40,8 @@ public class GameScreen extends ScreenAdapter {
         entities.add(new Wall(this, ShapeConverter.rectToPolygon(new Rectangle(283, 25, 11, 188))));
         entities.add(new Wall(this, ShapeConverter.rectToPolygon(new Rectangle(39, 213, 244, 11))));
 
-        entities.add(LevelGenerator.generatePlayer(this, game.getCam()));
+        player = LevelGenerator.generatePlayer(this, game.getCam());
+        entities.add(player);
 
         entities.addAll(LevelGenerator.generateLevel(this, 1));
     }
@@ -86,6 +87,10 @@ public class GameScreen extends ScreenAdapter {
             }
             shapeRenderer.end();
         }
+    }
+
+    public Entity getPlayer() {
+        return player;
     }
 
     public List<Entity> getEntities() {

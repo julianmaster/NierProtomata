@@ -38,6 +38,8 @@ public class NierProtomata extends Game {
 		TextureManager.load(Gdx.files.internal("bullet.png"));
 		TextureManager.load(Gdx.files.internal("bullet_shadow.png"));
 		TextureManager.load(Gdx.files.internal("enemy1.png"));
+		TextureManager.load(Gdx.files.internal("red_bullet.png"));
+		TextureManager.load(Gdx.files.internal("purple_bullet.png"));
 	}
 
 	@Override

@@ -5,17 +5,18 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Polygon;
+import com.nierprotomata.game.model.Constants;
 import com.nierprotomata.game.utils.TextureManager;
 import com.nierprotomata.game.view.Assets;
 import com.nierprotomata.game.view.GameScreen;
 
 public class Bullet extends Entity {
 
-	private float speed = 200f;
 	private float angleOffset = 90f;
 
 	public Bullet(GameScreen screen, Polygon shape, float degrees) {
 		super(screen, shape);
+		this.setSpeed(Constants.PLAYER_BULLET_SPEED);
 
 		getShape().setRotation(degrees);
 
@@ -28,7 +29,8 @@ public class Bullet extends Entity {
 	public void update(float delta) {
 		final float cos = MathUtils.cosDeg(getShape().getRotation() + angleOffset);
 		final float sin = MathUtils.sinDeg(getShape().getRotation() + angleOffset);
-		getShape().translate(cos * speed * delta, sin * speed * delta);
+		getDirection().set(cos, sin);
+		updatePhysic();
 	}
 
 	@Override
@@ -45,10 +47,7 @@ public class Bullet extends Entity {
 
 	@Override
 	public void triggerCollision(Entity otherCollider) {
-		if(otherCollider instanceof Wall) {
-			getScreen().getEntitiesToRemove().add(this);
-		}
-		else if(otherCollider instanceof Enemy) {
+		if(otherCollider instanceof Wall || otherCollider instanceof Enemy || otherCollider instanceof RedEnemyBullet) {
 			getScreen().getEntitiesToRemove().add(this);
 		}
 	}

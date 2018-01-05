@@ -42,10 +42,10 @@ public class LevelGenerator {
 		List<Entity> entities = new ArrayList<>();
 
 		Texture enemy1Tex = TextureManager.get(Assets.ENEMY1.ordinal());
-		Rectangle enemy1Rect = new Rectangle(Constants.CAMERA_WIDTH / 2f - enemy1Tex.getWidth() / 2f, Constants.CAMERA_HEIGHT * 4f / 5f - enemy1Tex.getHeight() / 2f, enemy1Tex.getWidth(), enemy1Tex.getHeight());
+		Rectangle enemy1Rect = new Rectangle(Constants.CAMERA_WIDTH / 2f - enemy1Tex.getWidth() / 2f, Constants.CAMERA_HEIGHT * 7f/10f - enemy1Tex.getHeight() / 2f, enemy1Tex.getWidth(), enemy1Tex.getHeight());
 		List<Vector2> path = new LinkedList<>();
-		path.add(new Vector2(Constants.CAMERA_WIDTH * 8f/10f, Constants.CAMERA_HEIGHT * 4f/5f - enemy1Tex.getHeight()/2f));
-		path.add(new Vector2(Constants.CAMERA_WIDTH * 2f/10f, Constants.CAMERA_HEIGHT * 4f/5f - enemy1Tex.getHeight()/2f));
+		path.add(new Vector2(Constants.CAMERA_WIDTH * 8f/10f, Constants.CAMERA_HEIGHT * 7f/10f - enemy1Tex.getHeight()/2f));
+		path.add(new Vector2(Constants.CAMERA_WIDTH * 1f/10f, Constants.CAMERA_HEIGHT * 7f/10f - enemy1Tex.getHeight()/2f));
 		Enemy1 enemy1 = new Enemy1(screen, ShapeConverter.rectToPolygon(enemy1Rect), path);
 		entities.add(enemy1);
 
