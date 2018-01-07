@@ -1,6 +1,5 @@
 package com.nierprotomata.game.model.entities;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
@@ -36,13 +35,11 @@ public class Bullet extends Entity {
 	@Override
 	public void render(SpriteBatch batch) {
 		Polygon shape = getShape();
-		Texture player = TextureManager.get(Assets.BULLET.ordinal());
-		Texture playerShadow = TextureManager.get(Assets.BULLET_SHADOW.ordinal());
-		TextureRegion texPlayer = new TextureRegion(player);
-		TextureRegion texPlayerShadow = new TextureRegion(playerShadow);
+		TextureRegion player = TextureManager.getTexture(Assets.BULLET.ordinal());
+		TextureRegion playerShadow = TextureManager.getTexture(Assets.BULLET_SHADOW.ordinal());
 
-		batch.draw(texPlayerShadow, shape.getX()-1, shape.getY()-1, shape.getOriginX(), shape.getOriginY(), player.getWidth(), player.getHeight(), 1, 1,  shape.getRotation());
-		batch.draw(texPlayer, shape.getX(), shape.getY(), shape.getOriginX(), shape.getOriginY(), player.getWidth(), player.getHeight(), 1, 1,  shape.getRotation());
+		batch.draw(playerShadow, shape.getX()-1, shape.getY()-1, shape.getOriginX(), shape.getOriginY(), player.getRegionWidth(), player.getRegionHeight(), 1, 1,  shape.getRotation());
+		batch.draw(player, shape.getX(), shape.getY(), shape.getOriginX(), shape.getOriginY(), player.getRegionWidth(), player.getRegionHeight(), 1, 1,  shape.getRotation());
 	}
 
 	@Override

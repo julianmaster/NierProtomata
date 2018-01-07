@@ -1,6 +1,6 @@
 package com.nierprotomata.game.model.entities;
 
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
@@ -8,10 +8,14 @@ import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.nierprotomata.game.model.Constants;
+import com.nierprotomata.game.utils.AnimationsManager;
+import com.nierprotomata.game.utils.AudioManager;
 import com.nierprotomata.game.utils.ShapeConverter;
 import com.nierprotomata.game.utils.TextureManager;
+import com.nierprotomata.game.view.Animations;
 import com.nierprotomata.game.view.Assets;
 import com.nierprotomata.game.view.GameScreen;
+import com.nierprotomata.game.view.Sounds;
 
 import java.util.List;
 
@@ -23,6 +27,9 @@ public class Enemy1 extends Enemy {
 
 	private float fireTimer = 0f;
 	private boolean redBullet = false;
+
+	private boolean runAnimation = false;
+	private float stateTime = 0;
 
 	public Enemy1(GameScreen screen, Polygon shape, List<Vector2> path) {
 		super(screen, shape);
@@ -47,28 +54,37 @@ public class Enemy1 extends Enemy {
 			float fireDegree = MathUtils.atan2(getScreen().getPlayer().getShape().getY() -getShape().getY(), getScreen().getPlayer().getShape().getX() - getShape().getX());
 
 			if(redBullet) {
-				Texture redBulletTex = TextureManager.get(Assets.RED_BULLET.ordinal());
-				Rectangle redBulletRect = new Rectangle(getShape().getX(), getShape().getY(), redBulletTex.getWidth(), redBulletTex.getHeight());
+				TextureRegion redBulletTex = TextureManager.getTexture(Assets.RED_BULLET.ordinal());
+				Rectangle redBulletRect = new Rectangle(getShape().getX(), getShape().getY(), redBulletTex.getRegionWidth(), redBulletTex.getRegionHeight());
 				RedEnemyBullet redBullet = new RedEnemyBullet(getScreen(), ShapeConverter.rectToPolygon(redBulletRect), fireDegree);
 				getScreen().getEntitiesToAdd().add(redBullet);
 			}
 			else {
-				Texture purpleBulletTex = TextureManager.get(Assets.PURPLE_BULLET.ordinal());
-				Rectangle purpleBulletRect = new Rectangle(getShape().getX(), getShape().getY(), purpleBulletTex.getWidth(), purpleBulletTex.getHeight());
+				TextureRegion purpleBulletTex = TextureManager.getTexture(Assets.PURPLE_BULLET.ordinal());
+				Rectangle purpleBulletRect = new Rectangle(getShape().getX(), getShape().getY(), purpleBulletTex.getRegionWidth(), purpleBulletTex.getRegionHeight());
 				PurpleEnemyBullet purpleBullet = new PurpleEnemyBullet(getScreen(), ShapeConverter.rectToPolygon(purpleBulletRect), fireDegree);
 				getScreen().getEntitiesToAdd().add(purpleBullet);
 			}
 
+			AudioManager.getSound(Sounds.ENEMY_SHOOT.ordinal()).play();
 			redBullet = !redBullet;
+		}
+
+		if(runAnimation) {
+			stateTime += delta;
 		}
 	}
 
 	@Override
 	public void render(SpriteBatch batch) {
-		Texture enemy1 = TextureManager.get(Assets.ENEMY1.ordinal());
-		TextureRegion enemy1Tex = new TextureRegion(enemy1);
+		Animation explosion = AnimationsManager.get(Animations.ENEMY1_EXPLOSION.ordinal());
+		if(!explosion.isAnimationFinished(stateTime) && runAnimation) {
+			TextureRegion explosionKeyFrame = (TextureRegion)explosion.getKeyFrame(stateTime);
+			batch.draw(explosionKeyFrame, getShape().getX() + (getShape().getBoundingRectangle().width - explosionKeyFrame.getRegionWidth()) / 2f, getShape().getY() + (getShape().getBoundingRectangle().height - explosionKeyFrame.getRegionHeight()) / 2);
+		}
 
-		batch.draw(enemy1Tex, getShape().getX(), getShape().getY(), enemy1.getWidth()/2f, enemy1.getHeight()/2f, (float)enemy1.getWidth(), (float)enemy1.getHeight(), 1, 1, 0f);
+		TextureRegion enemy1 = TextureManager.getTexture(Assets.ENEMY1.ordinal());
+		batch.draw(enemy1, getShape().getX(), getShape().getY(), enemy1.getRegionWidth()/2f, enemy1.getRegionHeight()/2f, (float)enemy1.getRegionWidth(), (float)enemy1.getRegionHeight(), 1, 1, 0f);
 	}
 
 	@Override
@@ -76,10 +92,16 @@ public class Enemy1 extends Enemy {
 		if(otherCollider instanceof Bullet) {
 			if(life > 1) {
 				life--;
+				runAnimation = true;
+				stateTime = 0f;
+				AudioManager.getSound(Sounds.ENEMY_HIT.ordinal()).play();
+
 			}
 			else {
 				getScreen().getEntitiesToRemove().add(this);
+				AudioManager.getSound(Sounds.ENEMY_BOSS_DESTROY.ordinal()).play();
 			}
+
 		}
 	}
 }

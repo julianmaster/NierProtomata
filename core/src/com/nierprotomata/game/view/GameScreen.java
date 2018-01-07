@@ -9,7 +9,6 @@ import com.badlogic.gdx.math.Rectangle;
 import com.nierprotomata.game.NierProtomata;
 import com.nierprotomata.game.model.*;
 import com.nierprotomata.game.model.entities.Entity;
-import com.nierprotomata.game.model.entities.Player;
 import com.nierprotomata.game.model.entities.Wall;
 import com.nierprotomata.game.utils.ShapeConverter;
 import com.nierprotomata.game.utils.TextureManager;
@@ -68,8 +67,8 @@ public class GameScreen extends ScreenAdapter {
 
         // Render
         batch.begin();
-        batch.draw(TextureManager.get(Assets.GROUND.ordinal()), 0, 0);
-        batch.draw(TextureManager.get(Assets.WALL.ordinal()), 0, 0);
+        batch.draw(TextureManager.getTexture(Assets.GROUND.ordinal()), 0, 0);
+        batch.draw(TextureManager.getTexture(Assets.WALL.ordinal()), 0, 0);
         for(Entity entity : entities) {
             entity.render(batch);
         }

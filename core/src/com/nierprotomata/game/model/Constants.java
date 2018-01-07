@@ -9,6 +9,7 @@ public class Constants {
     public static final float PLAYER_SPEED = 120f;
     public static final float PLAYER_FIRE_RATE = 1f / 15f;
     public static final float PLAYER_BULLET_SPEED = 200f;
+    public static final float PLAYER_INVINSIBLE_WAIT = 1f / 2f;
 
     public static final float ENEMY_BULLET_SPEED = 120f;
 

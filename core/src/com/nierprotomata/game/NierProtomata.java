@@ -7,6 +7,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.nierprotomata.game.model.Constants;
+import com.nierprotomata.game.utils.AnimationsManager;
+import com.nierprotomata.game.utils.AudioManager;
 import com.nierprotomata.game.utils.TextureManager;
 import com.nierprotomata.game.view.GameScreen;
 
@@ -44,6 +46,20 @@ public class NierProtomata extends Game {
 		TextureManager.load(Gdx.files.internal("enemy1.png"));
 		TextureManager.load(Gdx.files.internal("red_bullet.png"));
 		TextureManager.load(Gdx.files.internal("purple_bullet.png"));
+
+		AnimationsManager.load(Gdx.files.internal("enemy1_explosion.png"), 0.1f, 30, 30);
+
+		AudioManager.loadSound(Gdx.files.internal("Bruitage/NewGame.ogg"));
+		AudioManager.loadSound(Gdx.files.internal("Bruitage/MenuSelection.ogg"));
+		AudioManager.loadSound(Gdx.files.internal("Bruitage/MenuConfirmation.ogg"));
+		AudioManager.loadSound(Gdx.files.internal("Bruitage/MenuBack.ogg"));
+		AudioManager.loadSound(Gdx.files.internal("Bruitage/PlayerShoot.ogg"));
+		AudioManager.loadSound(Gdx.files.internal("Bruitage/PlayerDestroy.ogg"));
+		AudioManager.loadSound(Gdx.files.internal("Bruitage/EnemyShoot.ogg"));
+		AudioManager.loadSound(Gdx.files.internal("Bruitage/EnemyHit.ogg"));
+		AudioManager.loadSound(Gdx.files.internal("Bruitage/EnemyBulletHitWall.ogg"));
+		AudioManager.loadSound(Gdx.files.internal("Bruitage/EnemyNormalDestroy.ogg"));
+		AudioManager.loadSound(Gdx.files.internal("Bruitage/EnemyBossDestroy.ogg"));
 	}
 
 	@Override
@@ -62,6 +78,8 @@ public class NierProtomata extends Game {
 	public void dispose () {
 		batch.dispose();
 		TextureManager.dispose();
+		AnimationsManager.dispose();
+		AudioManager.dispose();
 	}
 
 	public SpriteBatch getBatch() {
